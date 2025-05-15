@@ -108,33 +108,33 @@ class victimModel:
             self.tokenizer.padding_side = 'left'
             self.tokenizer.pad_token = self.tokenizer.eos_token
             qwen_0 = OpenAI(
-                        api_key="sk-791c94867e76493889545d6cb9bd5318",
+                        api_key="<YOUR API>",
                         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
                     )
 
 
             qwen_1 = OpenAI(
-                        api_key="sk-a4a3883a52e147af81d5a7f2d309d0fb",
+                        api_key="<YOUR API>",
                         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
                     )
             
             gpt4o = OpenAI(
-                        api_key="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", 
+                        api_key="<YOUR API>", 
                         base_url="https://api.openai.com/v1",
                     )
             
             gemini = OpenAI(
-                            api_key="AIzaSyC2zJ5Sg9-_redJ4P3FCZdHyOulxQywmjY", 
+                            api_key="<YOUR API>", 
                             base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
                     )
             
             deepseek_0 = OpenAI(
-                        api_key="sk-1c9361ae71ec4c97b8319ec95b656221", 
+                        api_key="<YOUR API>", 
                         base_url="https://api.deepseek.com",
                     )
             
             deepseek_1 = OpenAI(
-                        api_key="sk-1c9361ae71ec4c97b8319ec95b656221", 
+                        api_key="<YOUR API>", 
                         base_url="https://api.deepseek.com",
                     )
             

@@ -688,7 +688,7 @@ class PPOTrainer(BaseTrainer):
         """
         bs = self.config.batch_size
         self._lambda = next(self.lambda_generator)
-        entropy_coef = self.config.entropy_coef if isinstance(self.config.entorpy_coef, float) else next(self.config.entorpy_coef)
+        entropy_coef = self.config.entropy_coef if isinstance(self.config.entropy_coef, float) else next(self.config.entropy_coef)
         vf_coef = self.config.vf_coef if isinstance(self.config.vf_coef, float) else next(self.config.vf_coef)
         pg_coef = self.config.pg_coef if isinstance(self.config.pg_coef, float) else next(self.config.pg_coef)
 

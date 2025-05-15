@@ -1,2 +1,0 @@
-[2025-05-15 12:21:36,242] [INFO] [real_accelerator.py:222:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-iteration = 1
