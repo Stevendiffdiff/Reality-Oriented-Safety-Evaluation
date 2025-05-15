@@ -1,0 +1,7 @@
+[url "https://github"]
+	insteadOf = git://github
+[user]
+	name = Stevendiffdiff
+	password = ding517120
+	email = stevendiffdiff@gmail.com
+
