@@ -31,6 +31,12 @@ bash Reality-Oriented-Safety-Evaluation/bash_scripts/baseline_RFT.sh
 ```
 to evaluate the baseline RFT-based methods against LLMs.
 
+* Run the bash script
+```
+bash Reality-Oriented-Safety-Evaluation/bash_scripts/ROSE.sh
+```
+to evaluate the ROSE against LLMs.
+
 
 
 
