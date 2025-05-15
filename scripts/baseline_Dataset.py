@@ -22,7 +22,7 @@ from supplementary_models import (
 
 parser = argparse.ArgumentParser(description="Run targeted jailbreak generation and evaluation")
 parser.add_argument("--seed", type=int, default=0, help="Random seed for reproducibility")
-parser.add_argument("--data_path", type=str, default="/home/dingjiale/Diversity-Driven-Jailbreak/data/wild-jailbreak/forbidden_question_set_with_prompts.xlsx", help="Path to dataset")
+parser.add_argument("--data_path", type=str, default="Reality-Oriented-Safety-Evaluation/data/JailBreakV_28K/JailBreakV_28K.xlsx", help="Path to dataset")
 parser.add_argument("--col_name", type=str, default="prompt", help="Dataset column name containing prompts")
 parser.add_argument("--batch_size", type=int, default=64, help="Batch size for victim model")
 parser.add_argument("--iteration_num", type=int, default=250, help="Number of training iterations")
