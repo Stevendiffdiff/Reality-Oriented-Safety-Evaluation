@@ -375,9 +375,10 @@ def collate(batch: dict, step: int = 0):
     batch['f1score'] = batch['f1score_t'] * batch['f1score_d']
     batch['f1score'] = torch.where(batch['f1score_d'] > args.div_threshold, batch['f1score_t'], batch['f1score'])
 
-    # extra bonus for top topic_diversity
+    # extra bonus for top topic_diversity & successful attacks
     _, topk_ids = torch.topk(batch['topic_diversity'], k=batch['topic_diversity'].shape[0] // 8)
     batch['f1score'][topk_ids] *= 4.
+    batch['f1score'] = torch.where(mask2, batch['f1score'] * 2., batch['f1score'])
 
     # clip reward
     batch['f1score'] = torch.clip(batch['f1score'], 0., 1.)
