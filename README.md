@@ -37,6 +37,9 @@ bash Reality-Oriented-Safety-Evaluation/bash_scripts/ROSE.sh
 ```
 to evaluate the ROSE against LLMs.
 
+## ROSEset
+You can get our out-of-the-box dataset ```ROSEset``` in ```Reality-Oriented-Safety-Evaluation/data/ROSEset```, where we provide three versions of the benchmark. You are recommended to use ```Reality-Oriented-Safety-Evaluation/data/ROSEset/benchmark-v2.xlsx```, which yields the best performance in our experiments.
+
 
 
 
