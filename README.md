@@ -24,9 +24,9 @@ The prompts are grounded in real-world scenarios:
 
 ## What is <font color=deeppink>ROSE<font color=lightgray>?
 Our method includes three key components:
-1. <font color="004C99"> **contextualized adversarial prompt generation** <font color=lightgray> pipeline;
-2. <font color="#1F6D42"> **reality-oriented reward system** <font color=lightgray>;
-3. <font color="#FF914E"> **multi-objective RFT-based optimization** <font color=lightgray>. 
+1. **contextualized adversarial prompt generation** pipeline;
+2. **reality-oriented reward system**;
+3. **multi-objective RFT-based optimization**. 
 
 <img src="sourced-materials/ROSE-framework.png">
 
