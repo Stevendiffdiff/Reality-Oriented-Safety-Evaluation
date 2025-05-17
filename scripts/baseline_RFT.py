@@ -29,7 +29,7 @@ from utils.common import weight_init, str2bool, compute_and_save_final_results
 from utils.api_generation import victimModel
 from lagrange import LagrangeMultiplier
 
-# %%
+# %% 
 parser = argparse.ArgumentParser()
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--data_path", type=str, default="ROSE/data/reddit_tifu/tifu.csv")
@@ -46,7 +46,7 @@ parser.add_argument("--div_threshold", type=float, default=0.4)
 parser.add_argument("--method", type=str, default="RFT", choices=["RFT", "CRT", "DiveRCT", "CALM"])
 args = parser.parse_args()
 
-# %%
+# %% Logging file preparation
 set_seed(args.seed)
 log_prefix = f"{args.method}_{args.seed}_{args.data_path[-8:-4]}_{args.system_prompt}_{args.victim_model}_{args.div_threshold}_"
 log_dir = os.path.join("Reality-Oriented-Safety-Evaluation/logs", log_prefix + datetime.now().strftime("%y%m%d%H%M%S"))
@@ -55,8 +55,20 @@ training_log_file = os.path.join(log_dir, 'train_log.csv')
 os.makedirs(log_dir, exist_ok=True)
 writer = SummaryWriter(log_dir)
 
-# %%
-device_config = {k: "cuda:0" for k in ["train", "non_gibberish", "consistency", "div_metric", "topic_diversity"]}
+# %% Model preparation
+device_config = {
+    "train": "cuda:0", 
+    "non_gibberish": "cuda:1", 
+    "consistency": "cuda:1", 
+    "div_metric": "cuda:1", 
+    "topic_diversity": "cuda:1",
+    } if args.system_prompt else {
+    "train": "cuda:0", 
+    "non_gibberish": "cuda:0", 
+    "consistency": "cuda:0", 
+    "div_metric": "cuda:0", 
+    "topic_diversity": "cuda:0",
+    }
 max_memory = {1: "15GiB", 2: "15GiB"} if "open" in args.victim_model else None
 
 bnb_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16)
@@ -90,7 +102,7 @@ v_generation_kwargs = {
     "max_tokens": 200,
 }
 
-# Load model
+# Adversarial model
 model = AutoModelForCausalLMWithValueHead.from_pretrained(
      "google/gemma-2-2b-it", 
      peft_config=peft_config, 
@@ -113,7 +125,7 @@ v_model = victimModel(
     device=max_memory,
 )
 
-# %%
+# %% Langrange parameter for DiveR-CT
 if args.method == "DiveRCT":
     def update_lagrange_multipliers(lagrange_multipliers, episode_costs, step, update_delay_steps = 50):
         """
@@ -144,7 +156,7 @@ if args.method == "DiveRCT":
                                     inverse_fn=torch.log, device=device_config['train'], is_main_process=True)
     }
 
-# %%
+# %% Configuration
 def entropy_coef_generator(*args, **kwargs):
     for i in range(ppo_config.steps):
         yield 0.0
@@ -187,7 +199,7 @@ items = [
     "pg_loss", "entropy_loss"
 ]
 
-# %%
+# %% Dataset preparation
 class TopicDiverseDataset(Dataset):
     """
     A dataset containing sentences from diverse topics.
@@ -229,7 +241,22 @@ class TopicDiverseDataset(Dataset):
 # %%
 dataset = TopicDiverseDataset(path=args.data_path, column=args.col_name)
 
-# %%
+# %% Reward functions
+class DiversityMetrics:
+    def __init__(self, v_tokenizer=v_model.tokenizer, tokenizer=tokenizer, is_victim=False):
+        self.bleu_score = SelfBLEUReward(device=device_config['div_metric'], tokenizer=v_tokenizer if is_victim else tokenizer)
+        self.sentence_embedding = SentenceEmbeddingReward(device_config['div_metric'])
+
+        obs_dim = model.config.hidden_size
+        self.t_rnd = RND(obs_dim, [1024], obs_dim).to(device_config['div_metric'])
+        self.tmp_rnd = RND(obs_dim, [1024], obs_dim).to(device_config['div_metric'])
+
+        self.pbe = PBE(k=10, sample_size=-1)
+
+div_metric = DiversityMetrics()
+v_div_metric = DiversityMetrics(is_victim=True)
+model_wte = dp(model.pretrained_model.model.model.embed_tokens).to(device_config['div_metric'])
+
 consistency_judge = consistencyReward(
     model="all-MiniLM-L6-v2",
     keyphrase_ngram_range=(1, 1),
@@ -254,35 +281,7 @@ toxicity_reward = toxicityReward(
     parallel=64,
 )
 
-class DiversityMetrics:
-    def __init__(self, v_tokenizer=v_model.tokenizer, tokenizer=tokenizer, is_victim=False):
-        self.bleu_score = SelfBLEUReward(device=device_config['div_metric'], tokenizer=v_tokenizer if is_victim else tokenizer)
-        self.sentence_embedding = SentenceEmbeddingReward(device_config['div_metric'])
-
-        obs_dim = model.config.hidden_size
-        self.t_rnd = RND(obs_dim, [1024], obs_dim).to(device_config['div_metric'])
-        self.tmp_rnd = RND(obs_dim, [1024], obs_dim).to(device_config['div_metric'])
-
-        self.pbe = PBE(k=10, sample_size=-1)
-
-div_metric = DiversityMetrics()
-v_div_metric = DiversityMetrics(is_victim=True)
-model_wte = dp(model.pretrained_model.model.model.embed_tokens).to(device_config['div_metric'])
-
-# %%
-model.train()
-optimizer = AdamW(
-    filter(lambda p: p.requires_grad, model.parameters()),
-    lr=ppo_config.learning_rate,
-    betas=(0.9, 0.95),
-    weight_decay=1e-6,
-)
-ppo_trainer = PPOTrainer(
-    ppo_config, model, ref_model, tokenizer, dataset, 
-    optimizer, dataset.collator
-)
-
-# %%
+# %% Reward computation
 def collate(batch: dict, step: int = 0):
     # Move input_ids to training device
     for i, item in enumerate(batch["input_ids"]):
@@ -419,12 +418,7 @@ def collate(batch: dict, step: int = 0):
         batch['rewards'] = list(batch["v_toxicity"] * im_config.f1_coef + batch['prompt_selfbleu'] * im_config.selfbleu_coef + batch['prompt_cosine'] * im_config.cos_coef + batch['non_gibberish'] * im_config.non_gibberish_coef)
     return returns
 
-# %%
-records = {key: [] for key in items}
-topic_embeddings, non_gibberish, toxicity = [], [], []
-count = total = 0
-
-# 保存基本配置与源代码信息
+# %% Save the configurations
 LOG_INFO = dict(
     config=dict(
         accelerator_kwargs=ppo_config.accelerator_kwargs,
@@ -436,12 +430,30 @@ LOG_INFO = dict(
         kl_penalty=ppo_config.kl_penalty,
         div_threshold=args.div_threshold,
         pg_coef=1.,
-        vf_coef=0.1,
-        entropy_coef=0.,
+        vf_coef=ppo_config.vf_coef,
+        entropy_coef=ppo_config.entropy_coef,
     )
 )
 with open(f"{log_dir}/config.json", "w") as f:
     json.dump(LOG_INFO, f, indent=2)
+
+# %% Training loop
+model.train()
+optimizer = AdamW(
+    filter(lambda p: p.requires_grad, model.parameters()),
+    lr=ppo_config.learning_rate,
+    betas=(0.9, 0.95),
+    weight_decay=1e-6,
+)
+ppo_trainer = PPOTrainer(
+    ppo_config, model, ref_model, tokenizer, dataset, 
+    optimizer, dataset.collator
+)
+
+
+records = {key: [] for key in items}
+topic_embeddings, non_gibberish, toxicity = [], [], []
+count = total = 0
 
 try:
     for it in tqdm(range(1, args.iteration_num + 1)):
@@ -489,8 +501,10 @@ try:
         torch.cuda.empty_cache()
     print(f"finish {log_prefix}")
 
+# Exception dealing & result calculation
 except Exception as e:
-    print(f"ERROR message: {e}")
+    print(f"ERROR: {e}")
+    print("Attempting to save partial results before exiting...")
     compute_and_save_final_results(
         topic_embeddings=topic_embeddings,
         non_gibberish=non_gibberish,
@@ -503,6 +517,7 @@ except Exception as e:
     raise e
 
 finally:
+    print(f"Finish {log_prefix}")
     compute_and_save_final_results(
         topic_embeddings=topic_embeddings,
         non_gibberish=non_gibberish,

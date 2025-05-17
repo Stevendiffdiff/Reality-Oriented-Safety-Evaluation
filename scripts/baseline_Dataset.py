@@ -20,6 +20,7 @@ from supplementary_models import (
     toxicityReward,
 )
 
+# %%
 parser = argparse.ArgumentParser(description="Run targeted jailbreak generation and evaluation")
 parser.add_argument("--seed", type=int, default=0, help="Random seed for reproducibility")
 parser.add_argument("--data_path", type=str, default="Reality-Oriented-Safety-Evaluation/data/JailBreakV_28K/JailBreakV_28K.xlsx", help="Path to dataset")
@@ -31,18 +32,19 @@ parser.add_argument("--victim_model", type=str, default="qwen-turbo", help="Vict
 parser.add_argument("--jailbreak_template", type=str2bool, default=False)
 args = parser.parse_args()
 
+# %% Logging file preparation
 set_seed(args.seed)
-
 log_prefix = f"Dataset_{args.data_path[-8:-4]}_{args.seed}_tifu_{args.system_prompt}_{args.victim_model}"
 log_dir = os.path.join("Reality-Oriented-Safety-Evaluation/logs", log_prefix + datetime.now().strftime("%y%m%d%H%M%S"))
 log_file = os.path.join(log_dir, "train.csv")
 training_log_file = os.path.join(log_dir, "train_log.csv")
 os.makedirs(log_dir, exist_ok=True)
 
+# %% Model preparation & reward functions
 nonGibberish_device = "cuda:0"
 consistency_device = "cuda:0"
 topic_diversity_device = "cuda:0"
-div_metric_device = "cuda:0"  # If you use this separately
+div_metric_device = "cuda:0"
 
 if "open" in args.victim_model:
     max_memory = {1: "15GiB", 2: "15GiB"}
@@ -94,7 +96,7 @@ toxicity_reward = toxicityReward(
 )
 
 
-# %%
+# %% Dataset preparation
 def data_loader(
     path: str = args.data_path,
     col_name: str = args.col_name,
@@ -115,6 +117,8 @@ def data_loader(
             yield data[batch_size * i: batch_size * i + batch_size]
 
 test_data_loader = data_loader()
+
+# %% Training loop
 topic_embeddings = []
 non_gibberish = []
 toxicity = []
@@ -155,6 +159,7 @@ try:
 
     print(f"Finished Training: {log_prefix}")
 
+# Exception dealing & result calculation
 except Exception as e:
     print(f"ERROR: {e}")
     print("Attempting to save partial results before exiting...")
