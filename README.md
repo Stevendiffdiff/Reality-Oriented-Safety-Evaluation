@@ -1,4 +1,4 @@
-# <img src='./sourced-materials/logo.png' width="15%"> <font color=deeppink>ROSE<font color=lightgray>: Toward Reality-Oriented Safety Evaluation of Large Lanuage Models
+# <img src='sourced-materials/logo.png' width="15%"> <font color=deeppink>ROSE<font color=lightgray>: Toward Reality-Oriented Safety Evaluation of Large Lanuage Models
 
 ## What is reality-oriented safety evaluation for LLMs?
 
@@ -12,7 +12,7 @@ The prompts contains diverse harmful goals:
 * ...
 
 **Are existing methods topically diverse?**
-![alt text](./sourced-materials/tab-diversity.png)
+![alt text](sourced-materials/tab-diversity.png)
 
 ### [3] Contextualized
 The prompts are grounded in real-world scenarios:
@@ -20,7 +20,7 @@ The prompts are grounded in real-world scenarios:
 * drinking a whole bottle of black cherry juice
 * ...
 
-![alt text](./sourced-materials/tab-consistency.png)
+![alt text](sourced-materials/tab-consistency.png)
 
 ## What is <font color=deeppink>ROSE<font color=lightgray>?
 Our method includes three key components:
