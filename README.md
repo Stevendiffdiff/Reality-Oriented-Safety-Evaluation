@@ -70,7 +70,7 @@ to evaluate the ROSE against LLMs.
 ## ROSEset
 You can get our out-of-the-box dataset ```ROSEset``` in ```Reality-Oriented-Safety-Evaluation/data/ROSEset```, where we provide three versions of the benchmark. You are recommended to use ```Reality-Oriented-Safety-Evaluation/data/ROSEset/benchmark-v2.xlsx```, which yields the best performance in our experiments.
 
-<img src="sourced-materials/ROSEset-radar.png">
+<img src="https://ts1.tc.mm.bing.net/th/id/R-C.1265eeb8f532ad394271027ca65cc9cd?rik=ovuKodiK1XUCsQ&riu=http%3a%2f%2fimages.cnitblog.com%2fblog%2f570672%2f201310%2f07145506-12ce507f7054415ea95f428a19514ef1.jpg&ehk=NYBeUnflw8p8wSdpicDHGnibQydHr03xx0hEYPHgZ3Q%3d&risl=&pid=ImgRaw&r=0">
 
 
 
