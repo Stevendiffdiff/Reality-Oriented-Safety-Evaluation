@@ -1,4 +1,4 @@
-# <img src='sourced-materials/logo.png' width="15%"> <font color=deeppink>ROSE<font color=lightgray>: Toward Reality-Oriented Safety Evaluation of Large Lanuage Models
+# <img src='sourced-materials/logo.png' width="10%"> <font color=deeppink>ROSE<font color=lightgray>: Toward Reality-Oriented Safety Evaluation of Large Lanuage Models
 
 ## What is reality-oriented safety evaluation for LLMs?
 
@@ -12,7 +12,8 @@ The prompts contains diverse harmful goals:
 * ...
 
 **Are existing methods topically diverse?**
-<img src='sourced-materials/tab-diversity.png'>
+
+<img src='sourced-materials/tab-diversity.png' width="50%">
 
 ### [3] Contextualized
 The prompts are grounded in real-world scenarios:
@@ -20,7 +21,7 @@ The prompts are grounded in real-world scenarios:
 * drinking a whole bottle of black cherry juice
 * ...
 
-<img src='sourced-materials/tab-consistency.png'>
+<img src='sourced-materials/tab-consistency.png'  width="50%">
 
 ## What is <font color=deeppink>ROSE<font color=lightgray>?
 Our method includes three key components:
@@ -70,4 +71,4 @@ to evaluate the ROSE against LLMs.
 ## ROSEset
 You can get our out-of-the-box dataset ```ROSEset``` in ```Reality-Oriented-Safety-Evaluation/data/ROSEset```, where we provide three versions of the benchmark. You are recommended to use ```Reality-Oriented-Safety-Evaluation/data/ROSEset/benchmark-v2.xlsx```, which yields the best performance in our experiments.
 
-<img src="sourced-materials/ROSEset-radar.png">
+<img src="sourced-materials/ROSEset-radar.png"  width="80%">
