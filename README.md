@@ -21,7 +21,7 @@ The prompts are grounded in real-world scenarios:
 * drinking a whole bottle of black cherry juice
 * ...
 
-<img src='sourced-materials/tab-consistency.png'  width="50%">
+<img src='sourced-materials/tab-consistency.png'  width="80%">
 
 ## What is <font color=deeppink>ROSE<font color=lightgray>?
 Our method includes three key components:
