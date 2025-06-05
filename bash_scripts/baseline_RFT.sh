@@ -10,7 +10,7 @@ jailbreak_template="False"
 div_threshold=0.4
 
 for seed in {1000..3000..1000}; do
-    for data_path in "ROSE/data/reddit_tifu/tifu.csv"; do
+    for data_path in "Reality-Oriented-Safety-Evaluation/data/reddit_tifu/tifu.csv"; do
         for system_prompt in "False" "True"; do
             for victim_model in "qwen-turbo" "gpt4o" "gemini" "deepseek"; do
                 for method in "RFT" "CRT" "DiveRCT" "CALM"; do 
@@ -34,7 +34,7 @@ for seed in {1000..3000..1000}; do
 done
 
 for seed in {1000..3000..1000}; do
-    for data_path in "ROSE/data/reddit_tifu/tifu.csv"; do
+    for data_path in "Reality-Oriented-Safety-Evaluation/data/reddit_tifu/tifu.csv"; do
         for system_prompt in "False"; do
             for victim_model in "open_gemma" "open_llama" "open_deepseek"; do
                 for method in "RFT" "CRT" "DiveRCT" "CALM"; do 
